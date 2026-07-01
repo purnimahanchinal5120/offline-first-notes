@@ -3,8 +3,11 @@ import 'package:equatable/equatable.dart';
 import '../../../../core/enums/sync_status.dart';
 
 class Note extends Equatable {
-
   final String id;
+
+  /// MockAPI ID
+  final String? remoteId;
+
   final String title;
   final String body;
 
@@ -21,6 +24,7 @@ class Note extends Equatable {
 
   const Note({
     required this.id,
+    this.remoteId,
     required this.title,
     required this.body,
     required this.createdAt,
@@ -33,6 +37,7 @@ class Note extends Equatable {
 
   Note copyWith({
     String? id,
+    String? remoteId,
     String? title,
     String? body,
     DateTime? createdAt,
@@ -44,6 +49,7 @@ class Note extends Equatable {
   }) {
     return Note(
       id: id ?? this.id,
+      remoteId: remoteId ?? this.remoteId,
       title: title ?? this.title,
       body: body ?? this.body,
       createdAt: createdAt ?? this.createdAt,
@@ -56,9 +62,9 @@ class Note extends Equatable {
   }
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
     id,
+    remoteId,
     title,
     body,
     createdAt,
@@ -68,5 +74,4 @@ class Note extends Equatable {
     version,
     isDeleted,
   ];
-
 }

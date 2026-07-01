@@ -4,6 +4,7 @@ import '../../domain/entities/note.dart';
 class NoteModel extends Note {
   const NoteModel({
     required super.id,
+    super.remoteId,
     required super.title,
     required super.body,
     required super.createdAt,
@@ -16,25 +17,42 @@ class NoteModel extends Note {
 
   factory NoteModel.fromJson(Map<String, dynamic> json) {
     return NoteModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      body: json['body'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      lastSyncedAt: json['lastSyncedAt'] != null
-          ? DateTime.parse(json['lastSyncedAt'] as String)
-          : null,
-      syncStatus: SyncStatus.values[
-      (json['syncStatus'] as int)
-          .clamp(0, SyncStatus.values.length - 1)],
-      version: json['version'] as int,
-      isDeleted: json['isDeleted'] as bool,
+      id: json['id'].toString(),
+
+      // remoteId is same as server id
+      remoteId: json['id']?.toString(),
+
+      title: json['title'] ?? '',
+      body: json['body'] ?? '',
+
+        createdAt: DateTime.tryParse(
+          json['createdAt']?.toString() ?? '',
+        ) ??
+            DateTime.now(),
+
+        updatedAt: DateTime.tryParse(
+          json['updatedAt']?.toString() ?? '',
+        ) ??
+            DateTime.now(),
+
+        lastSyncedAt: DateTime.tryParse(
+          json['lastSyncedAt']?.toString() ?? '',
+        ),
+
+        syncStatus: SyncStatus.values[
+        ((json['syncStatus'] ?? 0) as num)
+            .clamp(0, SyncStatus.values.length - 1)
+            .toInt()
+        ],
+
+    version: (json['version'] ?? 1) as int,
+
+      isDeleted: json['isDeleted'] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'title': title,
       'body': body,
       'createdAt': createdAt.toIso8601String(),
@@ -49,6 +67,7 @@ class NoteModel extends Note {
   factory NoteModel.fromEntity(Note note) {
     return NoteModel(
       id: note.id,
+      remoteId: note.remoteId,
       title: note.title,
       body: note.body,
       createdAt: note.createdAt,
@@ -63,6 +82,7 @@ class NoteModel extends Note {
   Note toEntity() {
     return Note(
       id: id,
+      remoteId: remoteId,
       title: title,
       body: body,
       createdAt: createdAt,
