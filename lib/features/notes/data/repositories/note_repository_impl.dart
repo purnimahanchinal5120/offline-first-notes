@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../../../../core/enums/sync_status.dart';
 import '../../domain/entities/note.dart';
 import '../../domain/entities/operation_type.dart';
@@ -30,6 +32,7 @@ class NoteRepositoryImpl implements NoteRepository {
         createdAt: DateTime.now(),
       ),
     );
+    debugPrint("REPOSITORY -> DELETE QUEUED");
   }
 
   @override
@@ -53,7 +56,6 @@ class NoteRepositoryImpl implements NoteRepository {
   }
 
   @override
-  @override
   Future<void> deleteNote(String id) async {
     final note = await localDataSource.getNoteById(id);
 
@@ -67,6 +69,7 @@ class NoteRepositoryImpl implements NoteRepository {
         createdAt: DateTime.now(),
       ),
     );
+    debugPrint("DELETE ADDED TO QUEUE");
 
     await localDataSource.deleteNote(id);
   }

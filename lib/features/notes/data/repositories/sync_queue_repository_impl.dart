@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../../domain/repositories/sync_queue_repository.dart';
 import '../datasources/local/sync_queue_datasource.dart';
 import '../models/sync_operation_model.dart';
@@ -13,6 +15,9 @@ class SyncQueueRepositoryImpl
       SyncOperationModel operation,
       ) {
     return local.addOperation(operation);
+    debugPrint(
+      "QUEUE SAVED -> ${operation.operation} ${operation.noteId}",
+    );
   }
 
   @override

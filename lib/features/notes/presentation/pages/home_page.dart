@@ -121,9 +121,28 @@ class _HomePageState extends ConsumerState<HomePage> {
                         );
                       },
                       onDelete: (note) async {
-                        await ref
-                            .read(noteProvider.notifier)
-                            .deleteNote(note.id);
+                        debugPrint("HOME DELETE START");
+
+                        try {
+                          await ref
+                              .read(noteProvider.notifier)
+                              .deleteNote(note.id);
+
+                          debugPrint("DELETE FINISHED");
+                        } catch (e, s) {
+                          debugPrint("DELETE ERROR: $e");
+                          debugPrint(s.toString());
+                        }
+
+                        debugPrint("CALLING MANUAL SYNC");
+
+                        try {
+                          await ref.read(sync.manualSyncProvider)();
+                        } catch (e) {
+                          debugPrint("SYNC ERROR: $e");
+                        }
+
+                        debugPrint("HOME DELETE END");
                       },
                     ),
                   ),

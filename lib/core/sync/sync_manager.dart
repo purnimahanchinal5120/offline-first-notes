@@ -36,7 +36,7 @@ class SyncManager {
 // STEP 2
 // Process queue
       final operations = await queueRepository.getOperations();
-
+      debugPrint("QUEUE SIZE = ${operations.length}");
       operations.sort(
             (a, b) => a.createdAt.compareTo(b.createdAt),
       );
@@ -139,6 +139,9 @@ class SyncManager {
   Future<void> _delete(SyncOperationModel operation) async {
     if (operation.remoteId != null) {
       debugPrint("Calling MockAPI DELETE...");
+      debugPrint("DELETE OPERATION");
+      debugPrint("noteId = ${operation.noteId}");
+      debugPrint("remoteId = ${operation.remoteId}");
       await remoteDataSource.deleteNote(
         operation.remoteId!,
       );

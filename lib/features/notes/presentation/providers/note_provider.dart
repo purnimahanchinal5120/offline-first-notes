@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -103,7 +104,12 @@ class NoteNotifier extends StateNotifier<AsyncValue<List<Note>>> {
   }
 
   Future<void> deleteNote(String id) async {
+    debugPrint("NOTIFIER -> DELETE $id");
+
     await repository.deleteNote(id);
+
+    debugPrint("NOTIFIER -> REPOSITORY FINISHED");
+
     await loadNotes();
   }
 
