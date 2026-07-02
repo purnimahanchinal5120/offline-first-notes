@@ -31,15 +31,49 @@ class _HomePageState extends ConsumerState<HomePage> {
     final notesState = ref.watch(noteProvider);
     final connectivity = ref.watch(connectivityProvider);
     return Scaffold(
+      backgroundColor: const Color(0xffF7F8FC),
       appBar: AppBar(
-        title: const Text(
-          "Offline Notes",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         centerTitle: false,
+        titleSpacing: 20,
+        title: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Offline Notes",
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff1F2937),
+              ),
+            ),
+            SizedBox(height: 2),
+            Text(
+              "Offline-first synchronization",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
 
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
+        elevation: 5,
+        backgroundColor: const Color(0xff4F46E5),
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: const Text(
+          "New Note",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         onPressed: () {
           Navigator.push(
             context,
@@ -48,7 +82,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           );
         },
-        child: const Icon(Icons.add_rounded),
       ),
 
       body: notesState.when(
@@ -70,7 +103,12 @@ class _HomePageState extends ConsumerState<HomePage> {
               await ref.read(sync.manualSyncProvider)();
             },
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(
+                20,
+                20,
+                20,
+                0,
+              ),
               child: Column(
                 children: [
                   connectivity.when(

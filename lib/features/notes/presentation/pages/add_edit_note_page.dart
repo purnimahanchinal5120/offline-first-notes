@@ -68,11 +68,10 @@ class _AddEditNotePageState
       title: title,
       body: body,
     );
+
     try {
       await ref.read(manualSyncProvider)();
-    } catch (_) {
-      // Ignore sync failures while offline.
-    }
+    } catch (_) {}
 
     if (!mounted) return;
 
@@ -82,16 +81,40 @@ class _AddEditNotePageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xffF7F8FC),
+
       appBar: AppBar(
-        title: Text(
-          isEditing
-              ? 'Edit Note'
-              : 'New Note',
+        elevation: 0,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        centerTitle: false,
+
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              isEditing ? "Edit Note" : "New Note",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xff1F2937),
+                fontSize: 22,
+              ),
+            ),
+            Text(
+              isEditing
+                  ? "Update your note"
+                  : "Capture your thoughts",
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
+          ],
         ),
+
         actions: [
           Padding(
-            padding:
-            const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(right: 12),
             child: SaveNoteButton(
               onPressed: _save,
               isEditing: isEditing,
@@ -99,24 +122,48 @@ class _AddEditNotePageState
           ),
         ],
       ),
+
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
+              const Text(
+                "Title",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xff374151),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
               NoteTitleField(
                 controller: titleController,
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
 
-              const Divider(),
-
-              const SizedBox(height: 12),
-
-              NoteBodyField(
-                controller: bodyController,
+              const Text(
+                "Content",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xff374151),
+                ),
               ),
+
+              const SizedBox(height: 10),
+
+              Expanded(
+                child: NoteBodyField(
+                  controller: bodyController,
+                ),
+              ),
+
             ],
           ),
         ),

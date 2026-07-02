@@ -24,8 +24,34 @@ class ConflictResolutionPage extends ConsumerWidget {
       ),
     );
     return Scaffold(
+      backgroundColor: const Color(0xffF7F8FC),
       appBar: AppBar(
-        title: const Text("Resolve Conflict"),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+
+            Text(
+              "Resolve Conflict",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xff1F2937),
+                fontSize: 22,
+              ),
+            ),
+
+            Text(
+              "Choose which version to keep",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
       ),
       body: SafeArea(
         child: Column(
@@ -33,24 +59,56 @@ class ConflictResolutionPage extends ConsumerWidget {
 
             Container(
               margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: Colors.orange.shade50,
-                borderRadius: BorderRadius.circular(16),
+                color: const Color(0xffFFF8E6),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: Colors.orange,
+                  color: Colors.orange.shade300,
                 ),
               ),
-              child: const Row(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.orange,
+
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.orange,
+                    ),
                   ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      "This note was modified on both your device and the server.",
+
+                  const SizedBox(width: 14),
+
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment:
+                      CrossAxisAlignment.start,
+                      children: [
+
+                        Text(
+                          "Conflict Detected",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ),
+
+                        SizedBox(height: 6),
+
+                        Text(
+                          "This note was edited both locally and on the server. Select the version you want to keep.",
+                          style: TextStyle(
+                            height: 1.5,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -106,7 +164,17 @@ class ConflictResolutionPage extends ConsumerWidget {
 
                   SizedBox(
                     width: double.infinity,
-                    child: FilledButton(
+                    child: FilledButton.icon(
+                      icon: const Icon(Icons.phone_android),
+                      label: const Text("Keep My Changes"),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xff4F46E5),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
                       onPressed: () async {
                         await ref
                             .read(conflictResolverProvider)
@@ -120,17 +188,25 @@ class ConflictResolutionPage extends ConsumerWidget {
                           Navigator.pop(context);
                         }
                       },
-                      child: const Text(
-                        "Keep My Changes",
-                      ),
                     ),
                   ),
-
                   const SizedBox(height: 10),
 
                   SizedBox(
                     width: double.infinity,
-                    child: OutlinedButton(
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.cloud_done),
+                      label: const Text("Keep Server Version"),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        side: const BorderSide(
+                          color: Color(0xff4F46E5),
+                        ),
+                        foregroundColor: const Color(0xff4F46E5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
                       onPressed: () async {
                         await ref
                             .read(conflictResolverProvider)
@@ -144,9 +220,6 @@ class ConflictResolutionPage extends ConsumerWidget {
                           Navigator.pop(context);
                         }
                       },
-                      child: const Text(
-                        "Keep Server Version",
-                      ),
                     ),
                   ),
 
@@ -154,7 +227,9 @@ class ConflictResolutionPage extends ConsumerWidget {
 
                   SizedBox(
                     width: double.infinity,
-                    child: TextButton(
+                    child: FilledButton.tonalIcon(
+                      icon: const Icon(Icons.merge),
+                      label: const Text("Merge Both Versions"),
                       onPressed: () async {
                         await ref
                             .read(conflictResolverProvider)
@@ -168,9 +243,6 @@ class ConflictResolutionPage extends ConsumerWidget {
                           Navigator.pop(context);
                         }
                       },
-                      child: const Text(
-                        "Keep Both",
-                      ),
                     ),
                   ),
                 ],
@@ -194,8 +266,22 @@ class _NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 1,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: Colors.grey.shade200,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(.04),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
@@ -203,33 +289,75 @@ class _NoteCard extends StatelessWidget {
           CrossAxisAlignment.start,
           children: [
 
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: title == "My Changes"
+                        ? const Color(0xffEEF2FF)
+                        : const Color(0xffECFDF5),
+                    borderRadius:
+                    BorderRadius.circular(30),
+                  ),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: title == "My Changes"
+                          ? const Color(0xff4F46E5)
+                          : Colors.green.shade700,
+                    ),
+                  ),
+                ),
+
+                const Spacer(),
+
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius:
+                    BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "v${note.version}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
 
-            const SizedBox(height: 12),
-
-            Text(
-              "Version : ${note.version}",
-            ),
-
-            const SizedBox(height: 8),
+            const SizedBox(height: 18),
 
             Text(
               note.title,
               style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Color(0xff1F2937),
               ),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
-            Text(note.body),
+            Text(
+              note.body,
+              style: const TextStyle(
+                fontSize: 15,
+                height: 1.7,
+                color: Color(0xff4B5563),
+              ),
+            ),
           ],
         ),
       ),
