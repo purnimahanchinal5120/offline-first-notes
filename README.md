@@ -245,7 +245,7 @@ lib
 ## Clone Repository
 
 ```bash
-git clone <repository-url>
+git clone <https://github.com/purnimahanchinal5120/offline-first-notes.git>
 ```
 
 ---
