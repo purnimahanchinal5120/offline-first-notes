@@ -1,6 +1,4 @@
 import 'package:flutter/cupertino.dart';
-
-import '../../../../core/enums/sync_status.dart';
 import '../../domain/entities/note.dart';
 import '../../domain/entities/operation_type.dart';
 import '../../domain/repositories/note_repository.dart';

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/enums/sync_status.dart';
-import '../../../../core/sync/sync_provider.dart';
 import '../../data/datasources/local/note_local_datasource.dart';
 import '../../data/datasources/local/note_local_datasource_impl.dart';
 import '../../data/datasources/local/sync_queue_datasource.dart';
@@ -138,6 +137,7 @@ class NoteNotifier extends StateNotifier<AsyncValue<List<Note>>> {
         syncStatus: SyncStatus.pending,
 
         version: 1,
+        lastSyncedVersion: 1,
       );
       await addNote(note);
     } else {
@@ -154,6 +154,7 @@ class NoteNotifier extends StateNotifier<AsyncValue<List<Note>>> {
           lastSyncedAt: existingNote.lastSyncedAt,
 
           version: existingNote.version + 1,
+          lastSyncedVersion: existingNote.lastSyncedVersion,
         ),
       );
     }

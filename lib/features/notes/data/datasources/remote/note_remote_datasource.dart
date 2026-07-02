@@ -14,4 +14,8 @@ abstract class NoteRemoteDataSource {
   Future<void> deleteNote(
       String id,
       );
+
+  Future<NoteModel> getNote(
+      String remoteId,
+      );
 }

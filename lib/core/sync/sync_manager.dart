@@ -30,34 +30,26 @@ class SyncManager {
       debugPrint("========== SYNC START ==========");
 
       // STEP 1
-// Download latest first and detect conflicts
+      // Download latest first and detect conflicts
       await _downloadLatestNotes();
 
-// STEP 2
-// Process queue
+      // STEP 2
+      // Process queue
       final operations = await queueRepository.getOperations();
       debugPrint("QUEUE SIZE = ${operations.length}");
-      operations.sort(
-            (a, b) => a.createdAt.compareTo(b.createdAt),
-      );
+      operations.sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
       for (final operation in operations) {
         try {
-          final note = await localDataSource.getNoteById(
-            operation.noteId,
-          );
+          final note = await localDataSource.getNoteById(operation.noteId);
 
           // Skip conflicted notes
-          if (note != null &&
-              note.syncStatus == SyncStatus.conflict) {
-            debugPrint(
-              "Skipping conflicted note ${note.id}",
-            );
+          if (note != null && note.syncStatus == SyncStatus.conflict) {
+            debugPrint("Skipping conflicted note ${note.id}");
             continue;
           }
 
-          debugPrint(
-              "Queue -> ${operation.operation}  ${operation.noteId}");
+          debugPrint("Queue -> ${operation.operation}  ${operation.noteId}");
 
           switch (operation.operation) {
             case OperationType.create:
@@ -73,16 +65,14 @@ class SyncManager {
               break;
           }
 
-          await queueRepository.removeOperation(
-            operation.noteId,
-          );
+          await queueRepository.removeOperation(operation.noteId);
         } catch (e) {
           debugPrint(e.toString());
         }
       }
 
-// STEP 3
-// Download again so local matches server
+      // STEP 3
+      // Download again so local matches server
       await _downloadLatestNotes();
 
       debugPrint("========== SYNC END ==========");
@@ -104,18 +94,16 @@ class SyncManager {
           remoteId: remote.remoteId,
           lastSyncedAt: DateTime.now(),
           syncStatus: SyncStatus.synced,
+          lastSyncedVersion: remote.version,
         ),
       ),
     );
 
-    debugPrint(
-      "CREATED -> localId=${local.id}, remoteId=${remote.remoteId}",
-    );
+    debugPrint("CREATED -> localId=${local.id}, remoteId=${remote.remoteId}");
   }
 
   Future<void> _update(String noteId) async {
-    final local =
-    await localDataSource.getNoteById(noteId);
+    final local = await localDataSource.getNoteById(noteId);
 
     if (local == null) return;
 
@@ -131,6 +119,7 @@ class SyncManager {
         local.copyWith(
           lastSyncedAt: DateTime.now(),
           syncStatus: SyncStatus.synced,
+          lastSyncedVersion: local.version,
         ),
       ),
     );
@@ -142,21 +131,14 @@ class SyncManager {
       debugPrint("DELETE OPERATION");
       debugPrint("noteId = ${operation.noteId}");
       debugPrint("remoteId = ${operation.remoteId}");
-      await remoteDataSource.deleteNote(
-        operation.remoteId!,
-      );
+      await remoteDataSource.deleteNote(operation.remoteId!);
       debugPrint("MockAPI DELETE SUCCESS");
     }
 
-    final local =
-    await localDataSource.getNoteById(
-      operation.noteId,
-    );
+    final local = await localDataSource.getNoteById(operation.noteId);
 
     if (local != null) {
-      await localDataSource.deleteNote(
-        operation.noteId,
-      );
+      await localDataSource.deleteNote(operation.noteId);
     }
     debugPrint("DELETE OPERATION");
     debugPrint("remoteId = ${operation.remoteId}");
@@ -185,37 +167,46 @@ class SyncManager {
     // -------------------------
     // Add / Update
     // -------------------------
+    debugPrint("BEFORE ADD/UPDATE LOOP");
     for (final remote in remoteNotes) {
-      final local =
-      await localDataSource.getNoteByRemoteId(
-        remote.remoteId!,
-      );
+      debugPrint(">>>>>>>> ENTERED REMOTE LOOP <<<<<<<<");
+      final local = await localDataSource.getNoteByRemoteId(remote.remoteId!);
+
+      debugPrint(
+          "LOCAL VERSION=${local?.version} "
+              "LAST_SYNC=${local?.lastSyncedVersion}");
+
+      debugPrint(
+          "REMOTE VERSION=${remote.version}");
 
       if (local == null) {
         await localDataSource.addNote(remote);
         continue;
       }
 
-      final localChanged =
-          local.lastSyncedAt != null &&
-              local.updatedAt.isAfter(local.lastSyncedAt!);
+      final baseVersion = local.lastSyncedVersion;
 
-      final remoteChanged =
-          local.lastSyncedAt != null &&
-              remote.updatedAt.isAfter(local.lastSyncedAt!);
+      final localChanged = local.version > baseVersion;
+      final remoteChanged = remote.version > baseVersion;
+
+      debugPrint(
+          "localChanged=$localChanged "
+              "remoteChanged=$remoteChanged");
+
+      debugPrint(
+          "LOCAL v=${local.version}, "
+              "REMOTE v=${remote.version}, "
+              "BASE=$baseVersion");
+
+      debugPrint(
+          "localChanged=$localChanged "
+              "remoteChanged=$remoteChanged");
 
       if (localChanged && remoteChanged) {
-
-        debugPrint(
-          "CONFLICT DETECTED -> ${local.id}",
-        );
+        debugPrint("CONFLICT DETECTED -> ${local.id}");
 
         await localDataSource.updateNote(
-          NoteModel.fromEntity(
-            local.copyWith(
-              syncStatus: SyncStatus.conflict,
-            ),
-          ),
+          NoteModel.fromEntity(local.copyWith(syncStatus: SyncStatus.conflict)),
         );
 
         continue;
@@ -233,6 +224,7 @@ class SyncManager {
             lastSyncedAt: DateTime.now(),
             syncStatus: SyncStatus.synced,
             version: remote.version,
+            lastSyncedVersion: remote.version,
             isDeleted: remote.isDeleted,
           ),
         );
@@ -248,7 +240,7 @@ class SyncManager {
       if (local.remoteId == null) continue;
 
       final exists = remoteNotes.any(
-            (remote) => remote.remoteId == local.remoteId,
+        (remote) => remote.remoteId == local.remoteId,
       );
 
       if (!exists) {

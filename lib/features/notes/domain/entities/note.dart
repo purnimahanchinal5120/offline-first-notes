@@ -7,19 +7,14 @@ class Note extends Equatable {
 
   /// MockAPI ID
   final String? remoteId;
-
   final String title;
   final String body;
-
   final DateTime createdAt;
   final DateTime updatedAt;
-
   final DateTime? lastSyncedAt;
-
   final SyncStatus syncStatus;
-
   final int version;
-
+  final int lastSyncedVersion;
   final bool isDeleted;
 
   const Note({
@@ -32,6 +27,7 @@ class Note extends Equatable {
     this.lastSyncedAt,
     this.syncStatus = SyncStatus.pending,
     this.version = 1,
+    this.lastSyncedVersion = 1,
     this.isDeleted = false,
   });
 
@@ -45,6 +41,7 @@ class Note extends Equatable {
     DateTime? lastSyncedAt,
     SyncStatus? syncStatus,
     int? version,
+    int? lastSyncedVersion,
     bool? isDeleted,
   }) {
     return Note(
@@ -57,6 +54,7 @@ class Note extends Equatable {
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
       syncStatus: syncStatus ?? this.syncStatus,
       version: version ?? this.version,
+      lastSyncedVersion: lastSyncedVersion ?? this.lastSyncedVersion,
       isDeleted: isDeleted ?? this.isDeleted,
     );
   }
@@ -72,6 +70,7 @@ class Note extends Equatable {
     lastSyncedAt,
     syncStatus,
     version,
+    lastSyncedVersion,
     isDeleted,
   ];
 }

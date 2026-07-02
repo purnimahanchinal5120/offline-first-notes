@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/enums/sync_status.dart';
 import '../../../../core/network/connectivity_provider.dart';
 import '../../../../core/sync/sync_provider.dart' as sync;
 import '../providers/note_provider.dart';
@@ -10,6 +11,7 @@ import '../widgets/home_header.dart';
 import '../widgets/note_list.dart';
 import '../widgets/search_bar_widget.dart';
 import 'add_edit_note_page.dart';
+import 'conflict_resolution_page.dart';
 import 'note_detail_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -103,13 +105,24 @@ class _HomePageState extends ConsumerState<HomePage> {
                         : NoteList(
                       notes: filtered,
                       onTap: (note) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                NoteDetailPage(note: note),
-                          ),
-                        );
+                        if (note.syncStatus == SyncStatus.conflict) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ConflictResolutionPage(
+                                localNote: note,
+                              ),
+                            ),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  NoteDetailPage(note: note),
+                            ),
+                          );
+                        }
                       },
                       onEdit: (note) {
                         Navigator.push(

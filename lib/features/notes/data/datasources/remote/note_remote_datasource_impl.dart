@@ -54,4 +54,17 @@ class NoteRemoteDataSourceImpl
       "${ApiConstants.notes}/$id",
     );
   }
+
+  @override
+  Future<NoteModel> getNote(
+      String remoteId,
+      ) async {
+    final response = await dio.get(
+      "${ApiConstants.notes}/$remoteId",
+    );
+
+    return NoteModel.fromJson(
+      response.data,
+    );
+  }
 }
